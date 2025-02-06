@@ -1,66 +1,317 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API de Gerenciamento de Médicos e Pacientes
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+#### Rotas Públicas
 
-## About Laravel
+```http
+  GET /medicos
+```
+```http
+  GET /cidades/{id_cidade}/medicos
+```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```http
+  GET /cidades
+```
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## **Base URL**
+http://localhost/api
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## **Autenticação**
+Todas as rotas marcadas como protegidas requerem autenticação do usuário. A autenticação é realizada utilizando tokens.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### **Cabeçalhos para autenticação**
+```json
+Authorization: Bearer {seu_token_de_acesso}
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### **Médicos**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### Listar Médicos
 
-## Laravel Sponsors
+```http
+  GET /medicos
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `nome` | `string` | **(Opcional)**. Busca por parte do nome do médico. |
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Retorna uma lista de todos os médicos cadastrados, ordenada alfabeticamente.
+Permite buscar por nome, ignorando prefixos como "Dr" ou "Dra".
+Parâmetros de URL:
 
-## Contributing
+Parâmetro	Tipo	Descrição
+nome	String	(Opcional) Busca por parte do nome do médico.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### Exemplo de Requisição:
+```http
+  GET /medicos?nome=Joao
+```
+#### Resposta:
+```json
+[
+    {
+        "id": 1,
+        "nome": "Dr. João",
+        "especialidade": "Cardiologista",
+        "cidade_id": 1,
+        "created_at": "2025-02-04T20:48:38.000000Z",
+        "updated_at": "2025-02-04T20:48:38.000000Z",
+        "deleted_at": null,
+        "cidade": {
+            "id": 1,
+            "nome": "São Paulo",
+            "estado": "SP",
+            "created_at": "2025-02-04T20:46:38.000000Z",
+            "updated_at": "2025-02-04T20:46:38.000000Z",
+            "deleted_at": null
+        }
+    }
+]
+```
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Listar Médicos de uma Cidade
 
-## Security Vulnerabilities
+```http
+  GET /cidades/{id_cidade}/medicos
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `id_cidade` | `Integer` | **(Obrigatorio)**. ID da cidade cujos médicos serão listados.nome do médico. |
+| `nome` | `string` | **(Opcional)**. Busca por parte do nome do médico. |
 
-## License
+#### Exemplo de Requisição:
+```http
+  GET /cidades/1/medicos?nome=Maria
+```
+```json
+[
+    {
+        "id": 1,
+        "nome": "Dr. João",
+        "especialidade": "Cardiologista",
+        "cidade_id": 1,
+        "created_at": "2025-02-04T20:48:38.000000Z",
+        "updated_at": "2025-02-04T20:48:38.000000Z",
+        "deleted_at": null
+    },
+]
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### **Pacientes**
+
+#### Listar Pacientes
+- Retorna uma lista de todos os pacientes cadastrados.
+
+#### Exemplo de Requisição:
+```http
+  GET /pacientes
+```
+#### Resposta:
+```json
+[
+    {
+        "id": 1,
+        "nome": "Carlos Silva",
+        "cpf": "123.456.789-00",
+        "celular": "11987654321",
+        "created_at": "2025-02-04T20:50:27.000000Z",
+        "updated_at": "2025-02-04T20:50:27.000000Z",
+        "deleted_at": null,
+    },
+]
+```
+
+#### Listar Pacientes de um Médico
+- Retorna todos os pacientes que possuem consultas agendadas ou realizadas com um médico específico.
+- Apenas usuários autenticados podem acessar esta rota.
+- Permite aplicar os seguintes filtros:
+    Consultas que ainda não foram realizadas.
+- Nome parcial do paciente.
+
+```http
+  GET /medicos/{id_medico}/pacientes
+```
+
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `id_medico` | `Integer` | ID do médico cujos pacientes serão listados. |
+| `apenas-agendadas` | `Boolean` | **(Opcional)**. Retorna apenas consultas que ainda não foram realizadas. |
+| `nome` | `string` | **(Opcional)**. Busca por parte do nome do paciente. |
+
+#### Exemplo de Requisição:
+```http
+  GET /medicos/1/pacientes?apenas-agendadas=true&nome=João
+```
+
+#### Resposta:
+
+```Json
+[
+    {
+        "id": 1,
+        "nome": "Carlos Silva",
+        "cpf": "123.456.789-00",
+        "celular": "11987654321",
+        "created_at": "2025-02-04T20:50:27.000000Z",
+        "updated_at": "2025-02-04T20:50:27.000000Z",
+        "deleted_at": null,
+        "consultas": [
+            {
+                "id": 2,
+                "medico_id": 1,
+                "paciente_id": 1,
+                "data": "2025-02-06 20:50:54",
+                "created_at": "2025-02-04T20:50:54.000000Z",
+                "updated_at": "2025-02-04T20:50:54.000000Z",
+                "deleted_at": null
+            }
+        ]
+    },
+]
+```
+
+#### Cadsatrar Pacientes
+
+- Permite criar um paciente.
+```http
+  POST /paciente
+```
+```Json
+{
+    "nome": "Joao MArcelo",
+    "cpf": 123456789012,
+    "celular": "98983535514"
+}
+```
+#### Resposta:
+
+```Json
+{
+    "nome": "João Marcelo",
+    "cpf": "123456789012",
+    "celular": "98983535514",
+    "updated_at": "2025-02-06T13:33:13.000000Z",
+    "created_at": "2025-02-06T13:33:13.000000Z",
+    "id": 4
+}
+```
+
+### **Consultas**
+
+
+#### Cadastrar consulta
+
+- Permite criar uma consulta entre um médico e um paciente.
+```http
+  POST /medico/consulta
+```
+
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `medico_id` | `Integer` | ID do médico que realizará a consulta. |
+| `paciente_id` | `Integer` | ID do paciente relacionado à consulta. |
+| `data` | `Datetime	` | Data e hora da consulta. |
+
+#### Exemplo de Requisição:
+
+```Json
+{
+    "medico_id": 1,
+    "paciente_id": 2,
+    "data": "2025-02-10 10:00:00"
+}
+```
+#### Resposta:
+
+```Json
+{
+    "id": 1,
+    "medico_id": 1,
+    "paciente_id": 2,
+    "data": "2025-02-10 10:00:00",
+}
+
+```
+
+#### Listar consultas
+
+```http
+  POST /consultas
+```
+```Json
+[
+    {
+        "id": 2,
+        "medico_id": 1,
+        "paciente_id": 1,
+        "data": "2025-02-06 20:50:54",
+        "created_at": "2025-02-04T20:50:54.000000Z",
+        "updated_at": "2025-02-04T20:50:54.000000Z",
+        "deleted_at": null,
+        "medico": {
+            "id": 1,
+            "nome": "Dr. João",
+            "especialidade": "Cardiologista",
+            "cidade_id": 1,
+            "created_at": "2025-02-04T20:48:38.000000Z",
+            "updated_at": "2025-02-04T20:48:38.000000Z",
+            "deleted_at": null
+        },
+        "paciente": {
+            "id": 1,
+            "nome": "Carlos Silva",
+            "cpf": "123.456.789-00",
+            "celular": "11987654321",
+            "created_at": "2025-02-04T20:50:27.000000Z",
+            "updated_at": "2025-02-04T20:50:27.000000Z",
+            "deleted_at": null
+        }
+    },
+]
+```
+
+### **Cidades**
+
+
+#### Listar Cidades
+```http
+  POST /cidades
+```
+
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `nome` | `string` | **(Opcional)**. Busca por parte da cidade. |
+
+
+- Retorna uma lista de todas as cidades cadastrados
+- Permite buscar por nome
+
+
+#### Exemplo de Requisição:
+```http
+  GET /cidades?nome=São
+```
+
+```Json
+[
+    {
+        "id": 1,
+        "nome": "São Paulo",
+        "estado": "SP",
+        "created_at": "2025-02-04T20:46:38.000000Z",
+        "updated_at": "2025-02-04T20:46:38.000000Z",
+        "deleted_at": null
+    }
+]
+```
+
+#### Respostas de Erro Comuns
+- 401 Unauthorized: O usuário não está autenticado.
+- 404 Not Found: O recurso solicitado não foi encontrado.

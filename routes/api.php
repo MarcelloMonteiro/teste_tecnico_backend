@@ -25,18 +25,19 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 Route::middleware('auth:api')->get('/me', [AuthController::class, 'me']);
 
 Route::get('/cidades', [CidadeController::class, 'index']);
+Route::get('/cidades/{id_cidade}/medicos', [MedicoController::class, 'getMedicosByCidade']);
 
 Route::get('/medicos', [MedicoController::class, 'index']);
 Route::middleware('auth:api')->post('/medicos', [MedicoController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/pacientes', [PacienteController::class, 'index']);
-    Route::post('/pacientes', [PacienteController::class, 'store']);
+    Route::get('/medicos/{id_medico}/pacientes', [PacienteController::class, 'getPacientesByMedico']);
+    Route::post('/paciente', [PacienteController::class, 'store']);
     Route::put('/pacientes/{paciente}', [PacienteController::class, 'update']);
 });
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/consultas', [ConsultaController::class, 'index']);
-    Route::post('/consultas', [ConsultaController::class, 'store']);
+    Route::post('/medico/consulta', [ConsultaController::class, 'store']);
 });
 
